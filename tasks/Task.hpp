@@ -4,6 +4,7 @@
 #define MAGNETOMETER_LSM303_TASK_TASK_HPP
 
 #include "magnetometer_lsm303/TaskBase.hpp"
+#include <magnetometer_lsm303/lsm303.hpp>
 
 namespace magnetometer_lsm303 {
 
@@ -25,8 +26,7 @@ namespace magnetometer_lsm303 {
     {
 	friend class TaskBase;
     protected:
-
-
+        magnetometer_lsm303::Driver* mDriver;
 
     public:
         /** TaskContext constructor for Task
