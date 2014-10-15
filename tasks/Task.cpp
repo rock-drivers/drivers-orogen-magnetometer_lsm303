@@ -27,10 +27,14 @@ Task::~Task()
 
 bool Task::configureHook()
 {
-  //TODO read calibration matrix
   mDriver = new magnetometer_lsm303::Driver();
   mDriver->setReadTimeout(base::Time::fromMilliseconds(_timeout));
   if(!_device.get().empty()) mDriver->open(_device.get());
+
+  //TODO only set Calibration matrices, if set
+  mDriver->setAccCalibrationMatrix(_acc_correction_matrix.get());
+  mDriver->setMagCalibrationMatrix(_mag_correction_matrix.get());
+//  if(!_acc_correction_matrix.get().empty()) mDriver->setAccCalibrationMatrix(_acc_correction_matrix.get());
 
     if (! TaskBase::configureHook())
         return false;
