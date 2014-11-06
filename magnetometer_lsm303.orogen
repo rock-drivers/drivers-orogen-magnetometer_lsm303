@@ -7,11 +7,13 @@ task_context "Task" do
 
     property "device", "/std/string"
     property "timeout", "double", 2.0
+    property "number_devices", "int", 1
     property "acc_correction_matrix", "base/MatrixXd"
+    property "acc_correction_matrices","std::vector<base/MatrixXd>"
     property "mag_correction_matrix", "base/MatrixXd"
     output_port "raw_values", "base/samples/IMUSensors"
     output_port "calibrated_values", "base/samples/IMUSensors"
-    output_port "heading", "base/samples/RigidBodyState"
+    output_port "test", "std::vector<base/samples/IMUSensors>"
 
     fd_driven
 end

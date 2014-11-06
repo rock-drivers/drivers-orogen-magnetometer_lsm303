@@ -27,13 +27,15 @@ Task::~Task()
 
 bool Task::configureHook()
 {
+  //TODO reserve NUM_SENSORS 
+  sensors.assign(_number_devices,base::samples::IMUSensors());
   mDriver = new magnetometer_lsm303::Driver();
   mDriver->setReadTimeout(base::Time::fromMilliseconds(_timeout));
   if(!_device.get().empty()) mDriver->open(_device.get());
 
   //TODO only set Calibration matrices, if set
-  mDriver->setAccCalibrationMatrix(_acc_correction_matrix.get());
-  mDriver->setMagCalibrationMatrix(_mag_correction_matrix.get());
+  mDriver->setAccCalibrationMatrix(0,_acc_correction_matrix.get());
+  mDriver->setMagCalibrationMatrix(0,_mag_correction_matrix.get());
 //  if(!_acc_correction_matrix.get().empty()) mDriver->setAccCalibrationMatrix(_acc_correction_matrix.get());
 
     if (! TaskBase::configureHook())
@@ -56,6 +58,11 @@ void Task::updateHook()
 {
   try{
     mDriver->read();
+    int no = mDriver->getDevNo();
+    sensors.at(no).time = base::Time::now();
+    sensors.at(no).acc = mDriver->getAcc();
+    sensors.at(no).mag = mDriver->getMag();
+    _test.write(sensors);
     if(mDriver->getDevNo() == 0) { //TODO support chained devices, right now just using first device
       base::samples::IMUSensors imu_raw, imu_cal;
       imu_raw.time = imu_cal.time = base::Time::now();
@@ -65,10 +72,11 @@ void Task::updateHook()
       imu_raw.mag[0] = mDriver->getRawMagX();
       imu_raw.mag[1] = mDriver->getRawMagY();
       imu_raw.mag[2] = mDriver->getRawMagZ();
+      //TODO invalidate imu_raw.gyro.invalidate();
       _raw_values.write(imu_raw);
-//      std::cout << mDriver->getAcc() << std::endl;
       imu_cal.acc  = mDriver->getAcc();
       imu_cal.mag  = mDriver->getMag();
+      //TODO invalidate imu_cal.gyro.invalidate();
       _calibrated_values.write(imu_cal);
 
       //TODO check for calibration values and if found write to _calibrated_values
