@@ -73,9 +73,7 @@ void Task::updateHook()
         imu_raw.at(no).mag[0] = mDriver->getRawMagX();
         imu_raw.at(no).mag[1] = mDriver->getRawMagY();
         imu_raw.at(no).mag[2] = mDriver->getRawMagZ();
-        imu_raw.at(no).gyro[0] = base::unknown<double>();
-        imu_raw.at(no).gyro[1] = base::unknown<double>();
-        imu_raw.at(no).gyro[2] = base::unknown<double>();
+        imu_raw.at(no).gyro   = base::Vector3d::Ones() * base::unknown<double>(); 
         _raw_values.write(imu_raw);
     }
     catch(iodrivers_base::TimeoutError){
