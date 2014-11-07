@@ -26,7 +26,7 @@ namespace magnetometer_lsm303 {
     {
 	friend class TaskBase;
       private:
-        std::vector<base::samples::IMUSensors> sensors;
+        std::vector<base::samples::IMUSensors> imu_raw, imu_cal;
     protected:
         magnetometer_lsm303::Driver* mDriver;
 
