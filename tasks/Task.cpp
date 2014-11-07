@@ -28,9 +28,16 @@ bool Task::configureHook()
   if(!_device.get().empty()) mDriver->open(_device.get());
 
   //TODO only set Calibration matrices, if set
-  mDriver->setAccCalibrationMatrix(0,_acc_correction_matrices.get().at(0));
-  mDriver->setMagCalibrationMatrix(0,_mag_correction_matrices.get().at(0));
-//  if(!_acc_correction_matrix.get().empty()) mDriver->setAccCalibrationMatrix(_acc_correction_matrix.get());
+  int i;
+  for (i = 0; i < _acc_correction_matrices.get().size(); ++i)
+  {
+      mDriver->setAccCalibrationMatrix(i, _acc_correction_matrices.get().at(i));
+  }
+
+  for (i = 0; i < _mag_correction_matrices.get().size(); ++i)
+  {
+      mDriver->setMagCalibrationMatrix(i, _mag_correction_matrices.get().at(i));
+  }
 
     if (! TaskBase::configureHook())
         return false;
