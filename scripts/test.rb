@@ -5,10 +5,10 @@ include Orocos
 Orocos.run "magnetometer_lsm303::Task" => "mag" do
   mag = Orocos.name_service.get("mag")
 
-  mag.device = "serial:///dev/ttyUSB0:57600"
+  mag.device = "serial:///dev/ttyUSB1:57600"
   mag.timeout = 2000
 
-  mag.number_devices = 2
+  mag.number_devices = 5
 
   acc_corr = [6.024509004513876409e-04, 9.222518010499308248e-06, 1.451897892865949735e-05,
            -9.251710063901275722e-06, 5.992525159615659947e-04, -2.658006955663259549e-07,
@@ -27,8 +27,8 @@ Orocos.run "magnetometer_lsm303::Task" => "mag" do
 
   acc_cor_m = Eigen::MatrixX.from_a(acc_corr,4,3,false)
   mag_cor_m = Eigen::MatrixX.from_a(mag_corr_als,4,3,false)
-  mag.acc_correction_matrices = [acc_cor_m, acc_cor_m]
-  mag.mag_correction_matrices = [mag_cor_m, mag_cor_m]
+  mag.acc_correction_matrices = [acc_cor_m]
+  mag.mag_correction_matrices = [mag_cor_m]
 
   mag.configure
   mag.start
