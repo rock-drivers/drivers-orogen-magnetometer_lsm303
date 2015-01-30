@@ -66,6 +66,18 @@ void Task::updateHook()
         imu_cal.at(no).gyro = base::Vector3d::Ones() * base::unknown<double>();
         _calibrated_values.write(imu_cal);
 
+        std::vector<Eigen::Vector3d> v;
+        for(int i = 0; i < _number_devices; ++i){
+            v.push_back(imu_cal.at(i).mag);
+        }
+
+        //TODO check for Orientation and RigidBodyState
+        base::Vector3d directionMean = magnetometer_lsm303::computeDirectionMean(v);
+        double directionDispersion = magnetometer_lsm303::computeDirectionDispersion(v);
+        
+        _direction_mean.write(directionMean);
+        _direction_dispersion.write(directionDispersion);
+
         imu_raw.at(no).time = base::Time::now();
         imu_raw.at(no).acc[0] = mDriver->getRawAccX();
         imu_raw.at(no).acc[1] = mDriver->getRawAccY();

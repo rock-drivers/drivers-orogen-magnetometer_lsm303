@@ -16,6 +16,9 @@ task_context "Task" do
     output_port "raw_values", "std::vector<base/samples/IMUSensors>"
     output_port "calibrated_values", "std::vector<base/samples/IMUSensors>"
 
+    output_port "direction_mean", "base/Vector3d"
+    output_port "direction_dispersion", "double"
+
     fd_driven
 end
 
