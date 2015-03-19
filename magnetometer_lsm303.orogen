@@ -5,19 +5,32 @@ using_library "magnetometer_lsm303"
 task_context "Task" do
     needs_configuration
 
-    property "device", "/std/string"
-    property "timeout", "double", 2.0
+    property('device', '/std/string').
+        doc('The device to be opened (e.g. serial:///dev/ttyUSB0:57600, tcp://myhost:54321)')
 
-    property "number_devices", "int", 1
+    property('timeout', 'double', 2.0).
+        doc('Timeout in milliseconds')
 
-    property "acc_correction_matrices","std::vector<base/MatrixXd>"
-    property "mag_correction_matrices","std::vector<base/MatrixXd>"
+    property('number_devices', 'int', 1).
+        doc('Number of LSM303 magnetometer devices attached on the SPI bus')
 
-    output_port "raw_values", "std::vector<base/samples/IMUSensors>"
-    output_port "calibrated_values", "std::vector<base/samples/IMUSensors>"
+    property('acc_correction_matrices','std::vector<base/MatrixXd>').
+        doc('Vector of n 4x3 sized correction matrices for the accelerometers according to ST application note AN3192') 
 
-    output_port "direction_mean", "base/Vector3d"
-    output_port "direction_dispersion", "double"
+    property('mag_correction_matrices','std::vector<base/MatrixXd>').
+        doc('Vector of n 4x3 sized correction matrices for the magnetometers according to ST application note AN3192')
+
+    output_port('raw_values', 'std::vector<base/samples/IMUSensors>').
+        doc('Raw accelerometer and magnetometer ADC values') 
+        
+    output_port('calibrated_values', 'std::vector<base/samples/IMUSensors>').
+        doc('Corrected accelerometer and magnetometer values using the given correction matrices')
+
+    output_port('direction_mean', 'base/Vector3d').
+        doc('The calculated mean direction of all attached LSM303 magnetometer/accelerometer devices')
+
+    output_port('direction_dispersion', 'double').
+        doc('The spread/dispersion value of all corrected directions (default: vMF metric, not necessarily a variance metric)')
 
     fd_driven
 end
