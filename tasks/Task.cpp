@@ -66,14 +66,35 @@ void Task::updateHook()
         imu_cal.at(no).gyro = base::Vector3d::Ones() * base::unknown<double>();
         _calibrated_values.write(imu_cal);
 
-        std::vector<Eigen::Vector3d> v;
+        
+        std::vector<Eigen::Vector3d> v_mag;
         for(int i = 0; i < _number_devices; ++i){
-            v.push_back(imu_cal.at(i).mag);
+            v_mag.push_back(imu_cal.at(i).mag);
         }
 
-        //TODO check for Orientation and RigidBodyState
-        base::Vector3d directionMean = magnetometer_lsm303::computeDirectionMean(v);
-        double directionDispersion = magnetometer_lsm303::computeDirectionDispersion(v);
+        std::vector<Eigen::Vector3d> v_acc;
+        for(int i = 0; i < _number_devices; ++i){
+            v_acc.push_back(imu_cal.at(i).acc);
+        }
+        
+        base::Vector3d acc_mean = magnetometer_lsm303::computeVectorMean(v_acc);
+        base::Vector3d mag_mean = magnetometer_lsm303::computeVectorMean(v_mag);
+
+        double heading = magnetometer_lsm303::computeHeading(acc_mean,mag_mean);
+        _heading.write(heading);
+
+        base::samples::RigidBodyState rbs(true);
+        rbs.time = base::Time::now();
+        //rbs.sourceFrame = _source_frame;
+        //rbs.targetFrame = _target_frame;
+        Eigen::AngleAxisd aa(heading,Eigen::Vector3d::UnitZ());
+        base::Quaterniond h(aa);
+        base::Quaterniond acc2world(Eigen::Quaternion<double>::FromTwoVectors(acc_mean,Eigen::Vector3d::UnitZ()));
+        rbs.orientation = acc2world * h;
+        _orientation.write(rbs);
+
+        base::Vector3d directionMean = magnetometer_lsm303::computeDirectionMean(v_mag);
+        double directionDispersion = magnetometer_lsm303::computeDirectionDispersion(v_mag);
         
         _direction_mean.write(directionMean);
         _direction_dispersion.write(directionDispersion);

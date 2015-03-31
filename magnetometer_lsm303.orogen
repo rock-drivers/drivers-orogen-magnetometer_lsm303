@@ -32,6 +32,26 @@ task_context "Task" do
     output_port('direction_dispersion', 'double').
         doc('The spread/dispersion value of all corrected directions (default: vMF metric, not necessarily a variance metric)')
 
+    output_port('heading', 'double').
+        doc('Calculated heading')
+
+    output_port('orientation', 'base/samples/RigidBodyState').
+        doc('Calculated rigid body state (orientation only, unfiltered)')
+
     fd_driven
 end
+
+task_context "Standalone" do
+    needs_configuration
+
+    input_port('imu','base/samples/IMUSensors')
+    output_port('heading', 'double')
+    output_port('orientation', 'base/samples/RigidBodyState')
+
+    port_driven 'imu'
+end
+
+ 
+
+
 
